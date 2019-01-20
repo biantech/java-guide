@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="alternate" media="handheld" href="#" />    
+    <title>jstat命令(Java Virtual Machine Statistics Monitoring Tool)-卞建权-整理资料 </title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+</head>
+<body> 
+<div class="container tabel-box">
+    <h2>jstat命令(Java Virtual Machine Statistics Monitoring Tool)</h2>
+    https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html<br>    
+    <h3>1.介绍</h3>
+    <p>
+       Jstat用于监控基于HotSpot的JVM，对其堆的使用情况进行实时的命令行的统计，使用jstat我们可以对指定的JVM做如下监控：<br>
+       - 类的加载及卸载情况 <br>
+       - 查看新生代、老生代及持久代的容量及使用情况<br>
+       - 查看新生代、老生代及持久代的垃圾收集情况，包括垃圾回收的次数及垃圾回收所占用的时间<br>
+       - 查看新生代中Eden区及Survior区中容量及分配情况等<br>
+        jstat工具特别强大，它有众多的可选项，通过提供多种不同的监控维度，使我们可以从不同的维度来了解到当前JVM堆的使用情况。详细查看堆内各个部分的使用量，使用的时候必须加上待统计的Java进程号，可选的不同维度参数以及可选的统计频率参数。<br>
+        它主要是用来显示GC及PermGen相关的信息，如果对GC不怎么了解,先了解一下GC,否则其中即使你会使用jstat这个命令，你也看不懂它的输出<br>
+    </p>
+    <h3>2.语法 </h3>
+    <p>
+        jstat [ generalOption | outputOptions vmid [interval[s|ms] [count]] ] <br>
+        generalOption - 单个的常用的命令行选项，如-help, -options, 或 -version。 <br>
+        outputOptions -一个或多个输出选项，由单个的statOption选项组成，可以和-t, -h, and -J等选项配合使用。<br>
+        statOption：根据jstat统计的维度不同，可以使用如下表中的选项进行不同维度的统计，不同的操作系统支持的选项可能会不一样，可以通过-options选项，查看不同操作系统所支持选项，如<br>
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                   <th scope="col">Option</th>
+                   <th scope="col">Displays</th>
+                </tr>                
+            </thead>
+            <tbody>
+                <tr><td >
+                    class</td>
+                        <td >用于查看类加载情况的统计</td>
+                        </tr>
+                <tr><td ><a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html#compiler_option" rel="nofollow" target="_blank">compiler</a></td>
+                        <td >用于查看HotSpot中即时编译器编译情况的统计</td>
+                        </tr>
+                <tr><td ><a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html#gc_option" rel="nofollow" target="_blank">gc</a></td>
+                        <td >用于查看JVM中堆的垃圾收集情况的统计</td>
+                        </tr>
+                <tr><td ><a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html#gccapacity_option" rel="nofollow" target="_blank">gccapacity</a></td>
+                        <td >用于查看新生代、老生代及持久代的存储容量情况</td>
+                        </tr>
+                <tr><td ><a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html#gccause_option" rel="nofollow" target="_blank">gccause</a></td>
+                        <td >用于查看垃圾收集的统计情况（这个和-gcutil选项一样），如果有发生垃圾收集，它还会显示最后一次及当前正在发生垃圾收集的原因。</td>
+                        </tr>
+                <tr><td ><a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html#gcnew_option" rel="nofollow" target="_blank">gcnew</a></td>
+                        <td >用于查看新生代垃圾收集的情况</td>
+                        </tr>
+                <tr><td ><a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html#gcnewcapacity_option" rel="nofollow" target="_blank">gcnewcapacity</a></td>
+                        <td >用于查看新生代的存储容量情况</td>
+                        </tr>
+                <tr><td ><a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html#gcold_option" rel="nofollow" target="_blank">gcold</a></td>
+                        <td >用于查看老生代及持久代发生GC的情况</td>
+                        </tr>
+                <tr><td ><a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html#gcoldcapacity_option" rel="nofollow" target="_blank">gcoldcapacity</a></td>
+                        <td >用于查看老生代的容量</td>
+                        </tr>
+                <tr><td ><a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html#gcpermcapacity_option" rel="nofollow" target="_blank">gcpermcapacity</a></td>
+                        <td >用于查看持久代的容量</td>
+                        </tr>
+                <tr><td ><a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html#gcutil_option" rel="nofollow" target="_blank">gcutil</a></td>
+                        <td >用于查看新生代、老生代及持代垃圾收集的情况</td>
+                        </tr><tr><td ><a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html#printcompilation_option" rel="nofollow" target="_blank">printcompilation</a></td>
+                        <td >HotSpot编译方法的统计</td>
+                        </tr>
+            </tbody> 
+        </table>
+        -h n <br>
+        用于指定每隔几行就输出列头，如果不指定，默认是只在第一行出现列头。<br>
+        -J javaOption <br>
+        用于将给定的javaOption传给java应用程序加载器，例如，“-J-Xms48m”将把启动内存设置为48M。如果想查看可以传递哪些选项到应用程序加载器中，可以相看如下的文档：<br>
+        -t n <br>
+        用于在输出内容的第一列显示时间戳，这个时间戳代表的时JVM开始启动到现在的时间（注：在IBM JDK5中是没有这个选项的）。<br>
+        vmid  - VM的进程号，即当前运行的java进程号。 <br>
+        还有两个关于显示频率的选项： <br>
+        interval–间隔时间，单位可以是秒或者毫秒，通过指定s或ms确定，默认单位为毫秒。<br>
+        count-打印次数，如果缺省则打印无数次。<br>
+
+
+    </p>
+    <h3>3.不同的统计维度（statOption）及输出说明</h3>
+    <p >
+        <h5>-class</h5>
+        
+                <table class="table table-bordered table-hover">
+                        <caption class="text-center">类加载情况的统计</caption>
+                        <tbody class="thead-light">
+                            <tr><th >列名</th>
+                        <th>说明</th>
+                        </tr><tr><td>Loaded</td>
+                        <td>加载了的类的数量</td>
+                        </tr><tr><td>Bytes</td>
+                        <td>加载<span style="font-family:'宋体';">了的类的<span style="font-family:'宋体';">大小，单为Kb</td>
+                        </tr><tr><td>Unloaded</td>
+                        <td>卸载了的类的数量</td>
+                        </tr><tr><td>Bytes</td>
+                        <td>卸载<span style="font-family:'宋体';">了的类的<span style="font-family:'宋体';">大小，单为Kb</td>
+                        </tr><tr><td>Time</td>
+                        <td>花在类的<span style="font-family:'宋体';">加载及卸载的时间</td>
+                        </tr></tbody>
+                </table>        
+        <h5>-compiler</h5>
+        <table class="table table-bordered table-hover">
+                <caption>HotSpot中即时编译器编译情况的统计 </caption>
+                <tbody class="thead-light"><tr><th>列名</th>
+                <th>说明</th>
+                </tr><tr><td>Compiled</td>
+                <td>编译任务执行的次数</td>
+                </tr><tr><td>Failed</td>
+                <td>编译任务执行失败的次数</td>
+                </tr><tr><td>Invalid</td>
+                <td>编译任务非法执行的次数</td>
+                </tr><tr><td>Time</td>
+                <td>执行<span style="font-family:'宋体';">编译花费的时间</td>
+                </tr><tr><td>FailedType</td>
+                <td>最后一次编译失败的编译类型</td>
+                </tr><tr><td>FailedMethod</td>
+                <td>最后一次编译失败的类<span style="font-family:'宋体';">名及方法名</td>
+                </tr></tbody>
+        </table>
+        <h5>-gc</h5>
+        <table class="table table-bordered table-hover"><caption>JVM中堆的垃圾收集情况的统计</caption>
+            <tbody class="thead-light"><tr><th >列名</th>
+            <th >说明</th>
+            </tr><tr><td>S0C</td>
+            <td>新生代中Survivor space中S0当前容量的大小（KB）</td>
+            </tr><tr><td>S1C</td>
+            <td>新生代中Survivor
+             space中S1当前容量的大小（KB）</td>
+            </tr><tr><td>S0U</td>
+            <td>新生代中Survivor
+             space中S0容量使用的大小（KB）</td>
+            </tr><tr><td>S1U</td>
+            <td>新生代中Survivor
+             space中S1容量使用的大小（KB）</td>
+            </tr><tr><td>EC</td>
+            <td>Eden space当前容量的大小（KB）</td>
+            </tr><tr><td>EU</td>
+            <td>Eden space容量使用的大小（KB）</td>
+            </tr><tr><td>OC</td>
+            <td>Old space当前容量的大小（KB）</td>
+            </tr><tr><td>OU</td>
+            <td>Old space使用容量的大小（KB）</td>
+            </tr><tr><td>PC</td>
+            <td>Permanent
+             space当前容量的大小（KB）</td>
+            </tr><tr><td>PU</td>
+            <td>Permanent
+             space使用容量的大小（KB）</td>
+            </tr><tr><td>YGC</td>
+            <td>从应用程序启动到采样时发生 Young GC 的次数</td>
+            </tr><tr><td>YGCT</td>
+            <td>从应用程序启动到采样时 Young GC 所用的时间(秒)</td>
+            </tr><tr><td>FGC</td>
+            <td>从应用程序启动到采样时发生 Full GC 的次数</td>
+            </tr><tr><td>FGCT</td>
+            <td>从应用程序启动到采样时 Full GC 所用的时间(秒)</td>
+            </tr><tr><td>GCT</td>
+            <td>T从应用程序启动到采样时用于垃圾回收的总时间(单位秒)，它的值等于YGC+FGC</td>
+            </tr></tbody></table>
+        <h5>-gccapacity</h5>
+        <table class="table table-bordered table-hover">
+            <caption>新生代、老生代及持久代的存储容量情况 </caption>
+            <tbody class="thead-light"><tr><th >列名</th>
+            <th>说明</th>
+            </tr><tr><td>NGCMN</td>
+            <td>新生代的最小容量大小（KB）</td>
+            </tr><tr><td>NGCMX</td>
+            <td>新生代的最大容量大小（KB）</td>
+            </tr><tr><td>NGC</td>
+            <td>当前新生代的容量大小（KB）</td>
+            </tr><tr><td>S0C</td>
+            <td>当前新生代中survivor space 0的容量大小（KB）</td>
+            </tr><tr><td>S1C</td>
+            <td>当前新生代中survivor
+             space 1的容量大小（KB）</td>
+            </tr><tr><td>EC</td>
+            <td>Eden space当前容量的大小（KB）</td>
+            </tr><tr><td>OGCMN</td>
+            <td>老生代的最小容量大小（KB）</td>
+            </tr><tr><td>OGCMX</td>
+            <td>老生代的最大容量大小（KB）</td>
+            </tr><tr><td>OGC</td>
+            <td>当前老生代的容量大小（KB）</td>
+            </tr><tr><td>OC</td>
+            <td>当前老生代的空间容量大小（KB）</td>
+            </tr><tr><td>PGCMN</td>
+            <td>持久代的最小容量大小（KB）</td>
+            </tr><tr><td>PGCMX</td>
+            <td>持久代的最大容量大小（KB）</td>
+            </tr><tr><td>PGC</td>
+            <td>当前持久代的容量大小（KB）</td>
+            </tr><tr><td>PC</td>
+            <td>当前持久代的空间容量大小（KB）</td>
+            </tr><tr><td>YGC</td>
+            <td>从应用程序启动到采样时发生 Young GC 的次数</td>
+            </tr><tr><td>FGC</td>
+            <td>从应用程序启动到采样时发生 Full GC 的次数</td>
+            </tr></tbody></table> 
+        <h5>-gccause</h5>
+        <p>这个选项用于查看垃圾收集的统计情况（这个和-gcutil选项一样），如果有发生垃圾收集，它还会显示最后一次及当前正在发生垃圾收集的原因，它比-gcutil会多出最后一次垃圾收集原因以及当前正在发生的垃圾收集的原因。</p>   
+        <table class="table table-bordered table-hover">
+            <caption>用于查看垃圾收集的统计情况，包括最近发生垃圾的原因 </caption>
+            <tbody class="thead-light"><tr><th>列名</span></th>
+            <th>说明</span></th>
+            </tr><tr><td>LGCC</td>
+            <td>最后一次垃圾收集的原因，可能为“”、“System.gc()”等</td>
+            </tr><tr><td>GCC</td>
+            <td>当前垃圾收集的原因</td>
+            </tr></tbody>
+        </table>
+        <h5>-gcnew</h5>
+        <table class="table table-bordered table-hover"><caption>新生代垃圾收集的情况</caption>
+            <tbody class="thead-light"><tr><th>列名</th>
+            <th>说明</th>
+            </tr><tr><td>S0C</td>
+            <td>当前新生代的容量大小（KB）</td>
+            </tr><tr><td>S1C</td>
+            <td>当前新生代中survivor space 1的容量大小（KB）</td>
+            </tr><tr><td>S0U</td>
+            <td>S0已经使用的大小（KB）</td>
+            </tr><tr><td>S1U</td>
+            <td>S1已经使用的大小（KB）</td>
+            </tr><tr><td>TT</td>
+            <td>Tenuring threshold，要了解这个参数，我们需要了解一点Java内存对象的结构，在Sun JVM中，（除了数组之外的）对象都有两个机器字（words）的头部。第一个字中包含这个对象的标示哈希码以及其他一些类似锁状态和等标识信息，第二个字中包含一个指向对象的类的引用，其中第二个字节就会被垃圾收集算法使用到。<br>
+            在新生代中做垃圾收集的时候，每次复制一个对象后，将增加这个对象的收集计数，当一个对象在新生代中被复制了一定次数后，该算法即判定该对象是长周期的对象，把他移动到老生代，这个阈值叫着tenuring threshold。这个阈值用于表示某个/些在执行批定次数youngGC后还活着的对象，即使此时新生的的Survior没有满，也同样被认为是长周期对象，将会被移到老生代中。</td>
+            </tr><tr><td>MTT</td>
+            <td>Maximum tenuring threshold，用于表示TT的最大值。</td>
+            </tr><tr><td>DSS</td>
+            <td>Desired survivor size (KB).可以参与这里：http://blog.csdn.net/yangjun2/article/details/6542357<br></td>
+            </tr><tr><td>EC</td>
+            <td>Eden space当前容量的大小（KB）</td>
+            </tr><tr><td>EU</td>
+            <td>Eden space已经使用的大小（KB）</td>
+            </tr><tr><td>YGC</td>
+            <td>从应用程序启动到采样时发生 Young GC 的次数</td>
+            </tr><tr><td>YGCT</td>
+            <td>从应用程序启动到采样时 Young GC 所用的时间(单位秒)</td>
+            </tr></tbody></table>
+        <h5> -gcnewcapacity</h5>
+        <table class="table table-bordered table-hover"><caption>新生代的存储容量情况</caption>
+            <tbody class="thead-light"><tr><th>列名</th>
+            <th>说明</th>
+            </tr><tr><td>NGCMN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td>新生代的最小容量大小（KB）</td>
+            </tr><tr><td>NGCMX &nbsp;&nbsp;&nbsp;</td>
+            <td>新生代的最大容量大小（KB）</td>
+            </tr><tr><td>NGC &nbsp;&nbsp;&nbsp;</td>
+            <td>当前新生代的容量大小（KB）</td>
+            </tr><tr><td>S0CMX</td>
+            <td>新生代中SO的最大容量大小（KB）</td>
+            </tr><tr><td>S0C</td>
+            <td>当前新生代中SO的容量大小（KB）</td>
+            </tr><tr><td>S1CMX</td>
+            <td>新生代中S1的最大容量大小（KB）</td>
+            </tr><tr><td>S1C</td>
+            <td>当前新生代中S1的容量大小（KB）</td>
+            </tr><tr><td>ECMX</td>
+            <td>新生代中Eden的最大容量大小（KB）</td>
+            </tr><tr><td>EC</td>
+            <td>当前新生代中Eden的容量大小（KB）</td>
+            </tr><tr><td>YGC</td>
+            <td>从应用程序启动到采样时发生 Young GC 的次数</td>
+            </tr><tr><td>FGC</td>
+            <td>从应用程序启动到采样时发生 Full GC 的次数</td>
+            </tr></tbody></table>
+        <h5> -gcold</h5>
+        <table class="table table-bordered table-hover"><caption>老生代及持久代发生GC的情况</caption>
+            <tbody  class="thead-light"><tr><th>列名</th>
+            <th>说明</th>
+            </tr><tr><td>PC</td>
+            <td>当前持久代容量的大小（KB）</td>
+            </tr><tr><td>PU</td>
+            <td>持久代使用容量的大小（KB）</td>
+            </tr><tr><td>OC</td>
+            <td>当前老年代容量的大小（KB）</td>
+            </tr><tr><td>OU</td>
+            <td>老年代使用容量的大小（KB）</td>
+            </tr><tr><td>YGC</td>
+            <td>从应用程序启动到采样时发生 Young GC 的次数</td>
+            </tr><tr><td>FGC</td>
+            <td>从应用程序启动到采样时发生 Full GC 的次数</td>
+            </tr><tr><td>FGCT</td>
+            <td>从应用程序启动到采样时 Full GC 所用的时间(单位秒)</td>
+            </tr><tr><td>GCT</td>
+            <td>从应用程序启动到采样时用于垃圾回收的总时间(单位秒)，它的值等于YGC+FGC</td>
+            </tr></tbody></table>
+        <h5>-gcoldcapacity</h5>
+        <table class="table table-bordered table-hover"><caption>老生代的存储容量情况</caption>
+            <tbody  class="thead-light"><tr><th>列名</th>
+            <th>说明</th>
+            </tr><tr><td>OGCMN</td>
+            <td>老生代的最小容量大小（KB）</td>
+            </tr><tr><td>OGCMX</td>
+            <td>老生代的最大容量大小（KB）</td>
+            </tr><tr><td>OGC</td>
+            <td>当前老生代的容量大小（KB）</td>
+            </tr><tr><td>OC</td>
+            <td>当前新生代的空间容量大小（KB）</td>
+            </tr><tr><td>YGC</td>
+            <td>从应用程序启动到采样时发生 Young GC 的次数</td>
+            </tr><tr><td>FGC</td>
+            <td>从应用程序启动到采样时发生 Full GC 的次数</td>
+            </tr><tr><td>FGCT</td>
+            <td>从应用程序启动到采样时 Full GC 所用的时间(单位秒)</td>
+            </tr><tr><td>GCT</td>
+            <td>从应用程序启动到采样时用于垃圾回收的总时间(单位秒)，它的值等于YGC+FGC</td>
+            </tr></tbody></table>  
+        <h5>-gcpermcapacity</h5> 
+        <table class="table table-bordered table-hover"><caption>持久代的存储容量情况</caption>
+            <tbody class="thead-light"><tr><th>列名</th>
+            <th>说明</th>
+            </tr><tr><td>PGCMN</td>
+            <td>持久代的最小容量大小（KB）</td>
+            </tr><tr><td>PGCMX</td>
+            <td>持久代的最大容量大小（KB）</td>
+            </tr><tr><td>PGC</td>
+            <td>当前持久代的容量大小（KB）</td>
+            </tr><tr><td>PC</td>
+            <td>当前持久代的空间容量大小（KB）</td>
+            </tr><tr><td>YGC</td>
+            <td>从应用程序启动到采样时发生 Young GC 的次数</td>
+            </tr><tr><td>FGC</td>
+            </tr><tr><td>FGCT</td>
+            <td>从应用程序启动到采样时 Full GC 所用的时间(单位秒)</td>
+            </tr><tr><td>GCT</td>
+            <td>从应用程序启动到采样时用于垃圾回收的总时间(单位秒)，它的值等于YGC+FGC</td>
+            </tr></tbody></table> 
+        <h5> -gcutil</h5> 
+        <table class="table table-bordered table-hover"><caption>新生代、老生代及持代垃圾收集的情况</caption>
+            <tbody class="thead-light"><tr><th>列名</th>
+            <th >说明</th>
+            </tr><tr><td>S0</td>
+            <td>Heap上的&nbsp;Survivor&nbsp;space&nbsp;0&nbsp;区已使用空间的百分比</td>
+            </tr><tr><td>S1</td>
+            <td>Heap上的&nbsp;Survivor&nbsp;space&nbsp;1&nbsp;区已使用空间的百分比</td>
+            </tr><tr><td>E</td>
+            <td>Heap上的&nbsp;Eden&nbsp;space&nbsp;区已使用空间的百分比</td>
+            </tr><tr><td>O</td>
+            <td>Heap上的&nbsp;Old&nbsp;space&nbsp;区已使用空间的百分比</td>
+            </tr><tr><td>P</td>
+            <td>Perm&nbsp;space&nbsp;区已使用空间的百分比</td>
+            </tr><tr><td>YGC</td>
+            <td>从应用程序启动到采样时发生&nbsp;Young&nbsp;GC&nbsp;的次数</td>
+            </tr><tr><td>YGCT</td>
+            <td>从应用程序启动到采样时&nbsp;Young&nbsp;GC&nbsp;所用的时间(单位秒)</td>
+            </tr><tr><td>FGC</td>
+            <td>从应用程序启动到采样时发生&nbsp;Full&nbsp;GC&nbsp;的次数</td>
+            </tr><tr><td>FGCT</td>
+            <td>从应用程序启动到采样时&nbsp;Full&nbsp;GC&nbsp;所用的时间(单位秒)</td>
+            </tr><tr><td>GCT</td>
+            <td>从应用程序启动到采样时用于垃圾回收的总时间(单位秒)，它的值等于YGC+FGC</td>
+            </tr></tbody></table> 
+        <h5>-printcompilation</h5>
+        <table class="table table-bordered table-hover tabel-box"><caption>HotSpot编译方法的统计</caption>
+            <tbody><tr><th>列名</th>
+            <th>说明</th>
+            </tr><tr><td>Compiled</td>
+            <td>编译任务执行的次数</td>
+            </tr><tr><td>Size</td>
+            <td>方法的字节码所占的字节数</td>
+            </tr><tr><td>Type</td>
+            <td>编译类型</td>
+            </tr><tr><td>Method</td>
+            <td>指定确定被编译方法的类名及方法名，类名中使名“/”而不是“.”做为命名分隔符，方法名是被指定的类中的方法，这两个字段的格式是由HotSpot中的“-<strong>XX:+PrintComplation</strong>”选项确定的。<br></td>
+            </tr></tbody></table>  
+
+    </p>
+    <h3>4.使用示例</h3>
+    <figure class="highlight">
+       <pre>
+           <code>jstat -gcutil 21891 250 7</code>
+       </pre>            
+    </figure>
+    <p>jstat -gcnew -h3 21891 250</p>
+    <p>jstat -gcutil 40496@remote.domain 1000</p>
+    <P><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html">Oracle jstat</a></P>
+</div>
+</body>
+</html>

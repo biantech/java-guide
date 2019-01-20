@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="alternate" media="handheld" href="#" />    
+    <title>Java jhat 命令-卞建权-整理资料 </title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+</head>
+<body> 
+<div class="container" role="main">
+    
+    <h3>jhat命令(Java Heap Analyse Tool)</h3>
+    <h3>1.介绍</h3>
+    <p>
+        <div class="alert alert-info">
+           Jhat用于对JAVA heap进行离线分析的工具，他可以对不同虚拟机中导出的heap信息文件进行分析，如LINUX上导出的文件可以拿到WINDOWS上进行分析，可以查找诸如内存方面的问题.<br>
+           不过jhat和MAT比较起来，就没有MAT那么直观了，MAT是以图形界面的方式展现结果<br>
+           第一步：导出堆 <br>
+           第二步：分析堆文件 <br>          
+           第三步：查看html <br>
+        </div>
+    </p>
+    <h3>2.命令格式 </h3>
+    <p>
+        jhat [ options ] heap-dump-file <br>
+        有时你dump出来的堆很大，在启动时会报堆空间不足的错误，可以使用如下参数：<br>
+        jhat -J-Xmx512m <heap dump file>
+    </p>
+    <h3>3.常用参数说明</h3>
+    <p>
+        <ol >
+            <li>options</li>
+            </p>
+            <li>基本参数</li>
+            <P>
+                -J < flag > 因为 jhat 命令实际上会启动一个JVM来执行, 通过 -J 可以在启动JVM时传入一些启动参数. 例如, -J-Xmx512m 则指定运行 jhat 的Java虚拟机使用的最大堆内存为 512 MB. 如果需要使用多个JVM启动参数,则传入多个 -Jxxxxxx <br>
+                -stack false|true 关闭跟踪对象分配调用堆栈。如果分配位置信息在堆转储中不可用. 则必须将此标志设置为 false. 默认值为 true.<br>
+                -refs false|true 关闭对象引用跟踪。默认情况下, 返回的指针是指向其他特定对象的对象,如反向链接或输入引用(referrers or incoming references), 会统计计算堆中的所有对象。<br>
+                -port port-number 设置 jhat HTTP server 的端口号. 默认值 7000。<br>
+                -exclude exclude-file 指定对象查询时需要排除的数据成员列表文件。 例如, 如果文件列出了 java.lang.String.value , 那么当从某个特定对象 Object o 计算可达的对象列表时, 引用路径涉及 java.lang.String.value 的都会被排除。<br>
+                -baseline exclude-file 指定一个基准堆转储(baseline heap dump)。 在两个 heap dumps 中有相同 object ID 的对象会被标记为不是新的(marked as not being new). 其他对象被标记为新的(new). 在比较两个不同的堆转储时很有用。<br>
+                -debug int 设置 debug 级别. 0 表示不输出调试信息。 值越大则表示输出更详细的 debug 信息。<br>
+                -version 启动后只显示版本信息就退出。<br>
+            </P>
+        </ol>
+    </p>
+    <h3>4.使用示例</h3>
+    <p>
+        <code class="code code-info">
+          Started HTTP server on port 7000 <br>
+          Server is ready.<br>
+        </code>
+        可以看到，hat内置的HTTP/HTML服务器启动成功了，端口为默认端口7000，浏览器访问http://localhost:7000，分析结果显示出来了<br>
+                
+        对于jhat启动后显示的html页面中功能：
+        （1）显示出堆中所包含的所有的类<br>
+        （2）从根集能引用到的对象<br>
+        （3）显示平台包括的所有类的实例数量<br>
+        （4）堆实例的分布表<br>
+        （5）执行对象查询语句<br>
+    </p>
+    <P>https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jhat.html </P>
+</div>
+</body>
+</html>

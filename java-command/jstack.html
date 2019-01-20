@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="alternate" media="handheld" href="#" />    
+    <title>Java 命令(Java Virtual Machine Tool)-卞建权-整理资料 </title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+</head>
+<body> 
+<div class="container" role="main">    
+    <h3>1.介绍</h3>
+    <p>
+        <div class="alert alert-info">
+            jstack用于打印出给定的java进程ID或core file或远程调试服务的Java堆栈信息，如果是在64位机器上，需要指定选项"-J-d64"，Windows的jstack使用方式只支持以下的这种方式：
+        </div>
+
+    jstack [-l] pid
+    <div class="alert alert-info">
+    如果java程序崩溃生成core文件，jstack工具可以用来获得core文件的java stack和native stack的信息，从而可以轻松地知道java程序是如何崩溃和在程序何处发生问题。另外，jstack工具还可以附属到正在运行的java程序中，看到当时运行的java程序的java stack和native stack的信息, 如果现在运行的java程序呈现hung的状态，jstack是非常有用的。
+    </div>    
+    </p>
+    <h3>2.命令格式 </h3>
+    <p>
+        jstack [ option ] pid <br>
+        jstack [ option ] executable core <br>
+        jstack [ option ] [server-id@]remote-hostname-or-IP <br>
+    </p>
+    <h3>3.常用参数说明</h3>
+    <p>
+        <ol >
+            <li>options</li>
+            <p>executable Java executable from which the core dump was produced.<br>
+                (可能是产生core dump的java可执行程序)<br>
+                core 将被打印信息的core dump文件<br>
+                remote-hostname-or-IP 远程debug服务的主机名或ip<br>
+                server-id 唯一id,假如一台主机上多个远程debug服务<br>
+            </p>
+            <li>基本参数</li>
+            <P>
+                -F 当’jstack [-l] pid’没有相应的时候强制打印栈信息<br>
+                -l 长列表. 打印关于锁的附加信息,例如属于java.util.concurrent的ownable synchronizers列表.<br>
+                -m 打印java和native c/c++框架的所有栈信息.<br>
+                -h | -help打印帮助信息<br>
+                pid 需要被打印配置信息的java进程id,可以用jps查询.<br>
+            </P>
+        </ol>
+    </p>
+    <h3>4.使用示例</h3>
+    <figure class="highlight">
+       <pre>
+           <code>jstack </code>
+       </pre>     
+    </figure>
+</div>
+</body>
+</html>

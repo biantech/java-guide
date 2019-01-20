@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="alternate" media="handheld" href="#" />    
+    <title>Java 命令(Java Virtual Machine Tool)-卞建权-整理资料 </title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+</head>
+<body class="nodata" > 
+https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jps.html
+ <div class=Section1 style='layout-grid:15.6pt'>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>1</span><span style='font-family:宋体'>、介绍</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;&nbsp;&nbsp; </span><span
+style='font-family:宋体'>用来查看基于</span><span lang=EN-US>HotSpot</span><span
+style='font-family:宋体'>的</span><span lang=EN-US>JVM</span><span
+style='font-family:宋体'>里面中，所有具有访问权限的</span><span lang=EN-US>Java</span><span
+style='font-family:宋体'>进程的具体状态</span><span lang=EN-US>, </span><span
+style='font-family:宋体'>包括进程</span><span lang=EN-US>ID</span><span
+style='font-family:宋体'>，进程启动的路径及启动参数等等，与</span><span lang=EN-US>unix</span><span
+style='font-family:宋体'>上的</span><span lang=EN-US>ps</span><span
+style='font-family:宋体'>类似，只不过</span><span lang=EN-US>jps</span><span
+style='font-family:宋体'>是用来显示</span><span lang=EN-US>java</span><span
+style='font-family:宋体'>进程，可以把</span><span lang=EN-US>jps</span><span
+style='font-family:宋体'>理解为</span><span lang=EN-US>ps</span><span
+style='font-family:宋体'>的一个子集。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;&nbsp;&nbsp; </span><span
+style='font-family:宋体'>使用</span><span lang=EN-US>jps</span><span
+style='font-family:宋体'>时，如果没有指定</span><span lang=EN-US>hostid</span><span
+style='font-family:宋体'>，它只会显示本地环境中所有的</span><span lang=EN-US>Java</span><span
+style='font-family:宋体'>进程；如果指定了</span><span lang=EN-US>hostid</span><span
+style='font-family:宋体'>，它就会显示指定</span><span lang=EN-US>hostid</span><span
+style='font-family:宋体'>上面的</span><span lang=EN-US>java</span><span
+style='font-family:宋体'>进程，不过这需要远程服务上开启了</span><span lang=EN-US>jstatd</span><span
+style='font-family:宋体'>服务，可以参看前面的</span><span lang=EN-US>jstatd</span><span
+style='font-family:宋体'>章节来启动</span><span lang=EN-US>jstad</span><span
+style='font-family:宋体'>服务。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>2</span><span style='font-family:宋体'>、命令格式</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>jps [ options ] [ hostid ]</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>3</span><span style='font-family:宋体'>、常用参数说明</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>-q </span><span style='font-family:宋体'>忽略输出的类名、</span><span
+lang=EN-US>Jar</span><span style='font-family:宋体'>名以及传递给</span><span
+lang=EN-US>main</span><span style='font-family:宋体'>方法的参数，只输出</span><span
+lang=EN-US>pid</span><span style='font-family:宋体'>。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>-m </span><span style='font-family:宋体'>输出传递给</span><span
+lang=EN-US>main</span><span style='font-family:宋体'>方法的参数，如果是内嵌的</span><span
+lang=EN-US>JVM</span><span style='font-family:宋体'>则输出为</span><span lang=EN-US>null</span><span
+style='font-family:宋体'>。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>-l </span><span style='font-family:宋体'>输出应用程序主类的完整包名，或者是应用程序</span><span
+lang=EN-US>JAR</span><span style='font-family:宋体'>文件的完整路径。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>-v </span><span style='font-family:宋体'>输出传给</span><span
+lang=EN-US>JVM</span><span style='font-family:宋体'>的参数。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>-V </span><span style='font-family:宋体'>输出通过标记的文件传递给</span><span
+lang=EN-US>JVM</span><span style='font-family:宋体'>的参数（</span><span lang=EN-US>.hotspotrc</span><span
+style='font-family:宋体'>文件，或者是通过参数</span><span lang=EN-US>-XX:Flags=&lt;filename&gt;</span><span
+style='font-family:宋体'>指定的文件）。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>-J </span><span style='font-family:宋体'>用于传递</span><span
+lang=EN-US>jvm</span><span style='font-family:宋体'>选项到由</span><span lang=EN-US>javac</span><span
+style='font-family:宋体'>调用的</span><span lang=EN-US>java</span><span
+style='font-family:宋体'>加载器中，例如，“</span><span lang=EN-US>-J-Xms48m</span><span
+style='font-family:宋体'>”将把启动内存设置为</span><span lang=EN-US>48M</span><span
+style='font-family:宋体'>，使用</span><span lang=EN-US>-J</span><span
+style='font-family:宋体'>选项可以非常方便的向基于</span><span lang=EN-US>Java</span><span
+style='font-family:宋体'>的开发的底层虚拟机应用程序传递参数。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>4</span><span style='font-family:宋体'>、服务器标识</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>hostid</span><span style='font-family:宋体'>指定了目标的服务器，它的语法如下：</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>[protocol:][[//]hostname][:port][/servername]</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>protocol - </span><span style='font-family:
+宋体'>如果</span><span lang=EN-US>protocol</span><span style='font-family:宋体'>及</span><span
+lang=EN-US>hostname</span><span style='font-family:宋体'>都没有指定，那表示的是与当前环境相关的本地协议，如果指定了</span><span
+lang=EN-US>hostname</span><span style='font-family:宋体'>却没有指定</span><span
+lang=EN-US>protocol</span><span style='font-family:宋体'>，那么</span><span
+lang=EN-US>protocol</span><span style='font-family:宋体'>的默认就是</span><span
+lang=EN-US>rmi</span><span style='font-family:宋体'>。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>hostname - </span><span style='font-family:
+宋体'>服务器的</span><span lang=EN-US>IP</span><span style='font-family:宋体'>或者名称，没有指定则表示本机。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>port - </span><span style='font-family:
+宋体'>远程</span><span lang=EN-US>rmi</span><span style='font-family:宋体'>的端口，如果没有指定则默认为</span><span
+lang=EN-US>1099</span><span style='font-family:宋体'>。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>Servername - </span><span style='font-family:
+宋体'>注册到</span><span lang=EN-US>RMI</span><span style='font-family:宋体'>注册中心中的</span><span
+lang=EN-US>jstatd</span><span style='font-family:宋体'>的名称。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>5</span><span style='font-family:宋体'>、使用示例</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>5.1</span><span style='font-family:宋体'>、列出本地的</span><span
+lang=EN-US>Java</span><span style='font-family:宋体'>进程</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:宋体'>不带任何参数</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>fenglibin@libin:~$ jps</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>11644 Main</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>1947 </span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>12843 Jps</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:宋体'>带</span><span lang=EN-US>-v</span><span
+style='font-family:宋体'>参数</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>fenglibin@libin:~$ jps -v</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>11644 Main
+-agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:43467
+-Dfile.encoding=GBK</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>1947&nbsp; -Dosgi.requiredJavaVersion=1.5
+-XX:MaxPermSize=256m -Xms40m -Xmx512m</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>12858 Jps
+-Denv.class.path=/home/fenglibin/java6/lib/dt.jar:/home/fenglibin/java6/lib/tools.jar::/usr/bin/libtool:/usr/bin/autoconf:/usr/local/BerkeleyDB.4.8/lib
+-Dapplication.home=/home/fenglibin/java6 -Xms8m</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:宋体'>带</span><span lang=EN-US>-l</span><span
+style='font-family:宋体'>参数</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>fenglibin@libin:~$ jps -l</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>11644 com.alibaba.china.webww.core.Main</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>12870 sun.tools.jps.Jps</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>1947</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>5.2</span><span style='font-family:宋体'>、列出远程的</span><span
+lang=EN-US>Java</span><span style='font-family:宋体'>进程</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:宋体'>在</span><span lang=EN-US>jstatd</span><span
+style='font-family:宋体'>章节，我们有通过：</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>rmiregistry 2020&amp;jstatd
+-J-Djava.security.policy=all.policy -p 2020 -n AlternateJstatdServerName</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:宋体'>启动了名为</span><span lang=EN-US>AlternateJstatdServerName</span><span
+style='font-family:宋体'>的</span><span lang=EN-US>jstatd</span><span
+style='font-family:宋体'>服务，那么我们此时就可以通过该服务列出其有权限访问的</span><span lang=EN-US>Java</span><span
+style='font-family:宋体'>进程。</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>fenglibin@libin:~$ jps
+10.1.1.234:2020/AlternateJstatdServerName</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>29556 Bootstrap</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>28671 WSPreLauncher</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>2602 RegistryImpl</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>18272 Test</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>2603 Jstatd</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>--------------------- </span></p>
+
+</body>
+</html>

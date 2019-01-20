@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="alternate" media="handheld" href="#" />    
+    <title>Java-jmap命令(Java Virtual Machine Tool)-卞建权-整理资料 </title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+</head>
+<body> 
+https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jmap.html
+
+<div class="container" role="main">
+    <h3>jmap</h3>    
+    <h3>1.介绍</h3>
+    <p>
+       <div class="alert alert-info">
+           打印出某个java进程（使用pid）内存内的，所有‘对象’的情况（如：产生那些对象，及其数量）。
+       </div>
+   
+    <div class="alert alert-info">
+            可以输出所有内存中对象的工具，甚至可以将VM 中的heap，以二进制输出成文本。使用方法 jmap -histo pid。如果连用SHELL jmap -histo pid>a.log可以将其保存到文本中去，在一段时间后，使用文本对比工具，可以对比出GC回收了哪些对象。jmap -dump:format=b,file=outfile 3024可以将3024进程的内存heap输出出来到outfile文件里，再配合MAT（内存分析工具(Memory Analysis Tool），使用参见：http://blog.csdn.net/fenglibing/archive/2011/04/02/6298326.aspx）或与jhat (Java Heap Analysis Tool)一起使用，能够以图像的形式直观的展示当前内存是否有问题。
+    </div> 
+    64位机上使用需要使用如下方式：
+    <p>
+        <code>jmap -J -d64 -heap pid</code>
+    </p>   
+    </p>
+    <h3>2.命令格式 </h3>
+    <p>
+        jmap [ option ] pid <br>
+        jmap [ option ] executable core <br>
+        jmap [ option ] [server-id@]remote-hostname-or-IP <br>
+    </p>
+    <h3>3.常用参数说明</h3>
+    <p>
+        <ol >
+            <li>options</li>
+            <p>executable Java executable from which the core dump was produced.<br>
+               (可能是产生core dump的java可执行程序)<br>
+               core 将被打印信息的core dump文件<br>
+               remote-hostname-or-IP 远程debug服务的主机名或ip<br>
+               server-id 唯一id,假如一台主机上多个远程debug服务<br>
+            </p>
+            <li>基本参数</li>
+            <P>
+               -dump:[live,]format=b,file=<filename> 使用hprof二进制形式,输出jvm的heap内容到文件=. live子选项是可选的，假如指定live选项,那么只输出活的对象到文件. <br>
+               -finalizerinfo 打印正等候回收的对象的信息.<br>
+               -heap 打印heap的概要信息，GC使用的算法，heap的配置及wise heap的使用情况.<br>
+               -histo[:live] 打印每个class的实例数目,内存占用,类全名信息. VM的内部类名字开头会加上前缀”*”. 如果live子参数加上后,只统计活的对象数量. <br>
+               -permstat 打印classload和jvm heap长久层的信息. 包含每个classloader的名字,活泼性,地址,父classloader和加载的class数量. 另外,内部String的数量和占用内存数也会打印出来. <br>
+               -F 强迫.在pid没有相应的时候使用-dump或者-histo参数. 在这个模式下,live子参数无效. <br>
+               -h | -help 打印辅助信息 <br>
+               -J 传递参数给jmap启动的jvm. <br>
+               pid 需要被打印配相信息的java进程id,创业与打工的区别 - 博文预览,可以用jps查问.<br>
+            </P>
+        </ol>
+    </p>
+    <h3>4.使用示例</h3>
+    <figure class="highlight">
+       <pre>
+           <code>[fenglb@ccbu-156-5 ~]$ jmap -histo 4939 </code>
+       </pre>     
+    </figure>
+    <p> jmap -dump:format=b,file=test.bin 4939</p>
+</div>
+</body>
+</html>
