@@ -12,11 +12,12 @@
 	<link rel="alternate" media="handheld" href="#" />    
     <title>jstat命令(Java Virtual Machine Statistics Monitoring Tool)-卞建权-整理资料 </title>
     <link rel="stylesheet" href="../css/bootstrap.css">
+	<link rel="stylesheet" href="../css/bian.css">
 </head>
 <body> 
 <div class="container tabel-box">
     <h2>jstat命令(Java Virtual Machine Statistics Monitoring Tool)</h2>
-    https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html<br>    
+	<p> https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html</p>
     <h3>1.介绍</h3>
     <p>
        Jstat用于监控基于HotSpot的JVM，对其堆的使用情况进行实时的命令行的统计，使用jstat我们可以对指定的JVM做如下监控：<br>
@@ -94,10 +95,9 @@
     </p>
     <h3>3.不同的统计维度（statOption）及输出说明</h3>
     <p >
-        <h5>-class</h5>
-        
+        <h5>-class</h5>        
                 <table class="table table-bordered table-hover">
-                        <caption class="text-center">类加载情况的统计</caption>
+                        <caption class="caption-bian">类加载情况的统计</caption>
                         <tbody class="thead-light">
                             <tr><th >列名</th>
                         <th>说明</th>
@@ -115,7 +115,7 @@
                 </table>        
         <h5>-compiler</h5>
         <table class="table table-bordered table-hover">
-                <caption>HotSpot中即时编译器编译情况的统计 </caption>
+                <caption class="caption-bian">HotSpot中即时编译器编译情况的统计 </caption>
                 <tbody class="thead-light"><tr><th>列名</th>
                 <th>说明</th>
                 </tr><tr><td>Compiled</td>
@@ -133,7 +133,8 @@
                 </tr></tbody>
         </table>
         <h5>-gc</h5>
-        <table class="table table-bordered table-hover"><caption>JVM中堆的垃圾收集情况的统计</caption>
+        <table class="table table-bordered table-hover">
+		    <caption class="caption-bian">JVM中堆的垃圾收集情况的统计</caption>
             <tbody class="thead-light"><tr><th >列名</th>
             <th >说明</th>
             </tr><tr><td>S0C</td>
@@ -174,7 +175,7 @@
             </tr></tbody></table>
         <h5>-gccapacity</h5>
         <table class="table table-bordered table-hover">
-            <caption>新生代、老生代及持久代的存储容量情况 </caption>
+            <caption class="caption-bian">新生代、老生代及持久代的存储容量情况 </caption>
             <tbody class="thead-light"><tr><th >列名</th>
             <th>说明</th>
             </tr><tr><td>NGCMN</td>
@@ -214,7 +215,7 @@
         <h5>-gccause</h5>
         <p>这个选项用于查看垃圾收集的统计情况（这个和-gcutil选项一样），如果有发生垃圾收集，它还会显示最后一次及当前正在发生垃圾收集的原因，它比-gcutil会多出最后一次垃圾收集原因以及当前正在发生的垃圾收集的原因。</p>   
         <table class="table table-bordered table-hover">
-            <caption>用于查看垃圾收集的统计情况，包括最近发生垃圾的原因 </caption>
+            <caption class="caption-bian">用于查看垃圾收集的统计情况，包括最近发生垃圾的原因 </caption>
             <tbody class="thead-light"><tr><th>列名</span></th>
             <th>说明</span></th>
             </tr><tr><td>LGCC</td>
@@ -224,7 +225,8 @@
             </tr></tbody>
         </table>
         <h5>-gcnew</h5>
-        <table class="table table-bordered table-hover"><caption>新生代垃圾收集的情况</caption>
+        <table class="table table-bordered table-hover">
+		    <caption class="caption-bian">新生代垃圾收集的情况</caption>
             <tbody class="thead-light"><tr><th>列名</th>
             <th>说明</th>
             </tr><tr><td>S0C</td>
@@ -252,7 +254,8 @@
             <td>从应用程序启动到采样时 Young GC 所用的时间(单位秒)</td>
             </tr></tbody></table>
         <h5> -gcnewcapacity</h5>
-        <table class="table table-bordered table-hover"><caption>新生代的存储容量情况</caption>
+        <table class="table table-bordered table-hover">
+            <caption class="caption-bian">新生代的存储容量情况</caption>
             <tbody class="thead-light"><tr><th>列名</th>
             <th>说明</th>
             </tr><tr><td>NGCMN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -279,7 +282,8 @@
             <td>从应用程序启动到采样时发生 Full GC 的次数</td>
             </tr></tbody></table>
         <h5> -gcold</h5>
-        <table class="table table-bordered table-hover"><caption>老生代及持久代发生GC的情况</caption>
+        <table class="table table-bordered table-hover">
+            <caption class="caption-bian">老生代及持久代发生GC的情况</caption>
             <tbody  class="thead-light"><tr><th>列名</th>
             <th>说明</th>
             </tr><tr><td>PC</td>
@@ -300,7 +304,8 @@
             <td>从应用程序启动到采样时用于垃圾回收的总时间(单位秒)，它的值等于YGC+FGC</td>
             </tr></tbody></table>
         <h5>-gcoldcapacity</h5>
-        <table class="table table-bordered table-hover"><caption>老生代的存储容量情况</caption>
+        <table class="table table-bordered table-hover">
+            <caption class="caption-bian">老生代的存储容量情况</caption>
             <tbody  class="thead-light"><tr><th>列名</th>
             <th>说明</th>
             </tr><tr><td>OGCMN</td>
@@ -321,7 +326,8 @@
             <td>从应用程序启动到采样时用于垃圾回收的总时间(单位秒)，它的值等于YGC+FGC</td>
             </tr></tbody></table>  
         <h5>-gcpermcapacity</h5> 
-        <table class="table table-bordered table-hover"><caption>持久代的存储容量情况</caption>
+        <table class="table table-bordered table-hover">
+            <caption class="caption-bian">持久代的存储容量情况</caption>
             <tbody class="thead-light"><tr><th>列名</th>
             <th>说明</th>
             </tr><tr><td>PGCMN</td>
@@ -341,7 +347,8 @@
             <td>从应用程序启动到采样时用于垃圾回收的总时间(单位秒)，它的值等于YGC+FGC</td>
             </tr></tbody></table> 
         <h5> -gcutil</h5> 
-        <table class="table table-bordered table-hover"><caption>新生代、老生代及持代垃圾收集的情况</caption>
+        <table class="table table-bordered table-hover">
+            <caption class="caption-bian">新生代、老生代及持代垃圾收集的情况</caption>
             <tbody class="thead-light"><tr><th>列名</th>
             <th >说明</th>
             </tr><tr><td>S0</td>
@@ -366,7 +373,8 @@
             <td>从应用程序启动到采样时用于垃圾回收的总时间(单位秒)，它的值等于YGC+FGC</td>
             </tr></tbody></table> 
         <h5>-printcompilation</h5>
-        <table class="table table-bordered table-hover tabel-box"><caption>HotSpot编译方法的统计</caption>
+        <table class="table table-bordered table-hover tabel-box">
+            <caption class="caption-bian">HotSpot编译方法的统计</caption>
             <tbody><tr><th>列名</th>
             <th>说明</th>
             </tr><tr><td>Compiled</td>
@@ -389,6 +397,7 @@
     <p>jstat -gcnew -h3 21891 250</p>
     <p>jstat -gcutil 40496@remote.domain 1000</p>
     <P><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html">Oracle jstat</a></P>
+	
 </div>
 </body>
 </html>
