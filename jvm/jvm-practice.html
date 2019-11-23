@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="alternate" media="handheld" href="#" />    
+    <title>Java 生产环境参数实例及分析-卞建权-整理资料 </title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+</head>
+<body> 
+<div class="container" role="main">    
+    <h3>JVM参数配置详解</h3>
+    <p>
+        <div class="postBody">
+            <div id="cnblogs_post_body" class="blogpost-body ">
+              <p><strong>java application项目（非web项目）</strong></p> <p>改进前：</p> <div><pre style="border-bottom-style: none; text-align: left; padding-bottom: 0px; line-height: 12pt; border-right-style: none; background-color: #f4f4f4; margin: 0em; padding-left: 0px; width: 100%; padding-right: 0px; font-family: 'Courier New', courier, monospace; direction: ltr; border-top-style: none; color: black; font-size: 8pt; border-left-style: none; overflow: visible; padding-top: 0px" id="codeSnippet">-Xms128m<br>-Xmx128m<br>-XX:NewSize=64m<br>-XX:PermSize=64m<br>-XX:+UseConcMarkSweepGC<br>-XX:CMSInitiatingOccupancyFraction=78<br>-XX:ThreadStackSize=128<br>-Xloggc:logs/gc<span style="color: #cc6633">.log</span><br>-Dsun<span style="color: #cc6633">.rmi</span><span style="color: #cc6633">.dgc</span><span style="color: #cc6633">.server</span><span style="color: #cc6633">.gcInterval</span>=3600000<br>-Dsun<span style="color: #cc6633">.rmi</span><span style="color: #cc6633">.dgc</span><span style="color: #cc6633">.client</span><span style="color: #cc6633">.gcInterval</span>=3600000<br>-Dsun<span style="color: #cc6633">.rmi</span><span style="color: #cc6633">.server</span><span style="color: #cc6633">.exceptionTrace</span>=true</pre></div>
+            <div>问题:</div>
+            <ol>
+                <li>permsize 设置较小,很容易达到报警范围(0.8) </li>
+                <li>没有设置MaxPermSize，堆增长会带来额外压力。 </li>
+                <li>NewSize较大，old gen 剩余空间64m，一方面可能会带来old区容易增长到报警范围（监控数据显示oldgenused长期在50m左右，接近78%，容易出现full gc）,另一方面也存在promontion fail风险</li>
+            </ol>
+             <div>改进后：</div>
+             <div>
+                <pre style="border-bottom-style: none; text-align: left; padding-bottom: 0px; line-height: 12pt; border-right-style: none; background-color: #f4f4f4; margin: 0em; padding-left: 0px; width: 100%; padding-right: 0px; font-family: 'Courier New', courier, monospace; direction: ltr; border-top-style: none; color: black; font-size: 8pt; border-left-style: none; overflow: visible; padding-top: 0px" id="codeSnippet">-Xms128m<br>-Xmx128m<br>-Xmn24m<br>-XX:PermSize=80m<br>-XX:MaxPermSize=80m<br>-Xss256k<br>-XX:SurvivorRatio=1<br>-XX:MaxTenuringThreshold=20<br>-XX:+UseParNewGC<br>-XX:+UseConcMarkSweepGC<br>-XX:CMSInitiatingOccupancyFraction=75<br>-XX:+UseCMSCompactAtFullCollection<br>-XX:+CMSParallelRemarkEnabled<br>-XX:CMSFullGCsBeforeCompaction=2<br>-XX:SoftRefLRUPolicyMSPerMB=0<br>-XX:+PrintClassHistogram<br>-XX:+PrintGCDetails<br>-XX:+PrintGCTimeStamps<br>-XX:+PrintHeapAtGC<br>-Xloggc:logs/gc<span style="color: #cc6633">.log</span><br>-Dsun<span style="color: #cc6633">.rmi</span><span style="color: #cc6633">.dgc</span><span style="color: #cc6633">.server</span><span style="color: #cc6633">.gcInterval</span>=3600000<br>-Dsun<span style="color: #cc6633">.rmi</span><span style="color: #cc6633">.dgc</span><span style="color: #cc6633">.client</span><span style="color: #cc6633">.gcInterval</span>=3600000<br>-Dsun<span style="color: #cc6633">.rmi.server.exceptionTrace=true</span></pre></div>
+             <div>修改点：</div>
+            <ol>
+                <li>PermSize与MaxPermSize都设置为80，一方面避免non heap warn(报警阀值0.8 非对内存一般占用到60M以内），一方面避免堆伸缩带来的压力 </li>
+                <li>通过设置Xmn=24M及SurvivorRatio=1 使得Eden区=from space=to&nbsp; space=8M,降低了Eden区大小，降低YGC的时间(降低到3-4ms左右),同时通过设MaxTenuringThreshold=20，使得old gen的增长很缓慢。带来的问题是YGC的次数明显提高了很多。</li>
+                <li>其他参数优化</li>
+            </ol>
+                    <div>再次改进后</div>
+                    <div id="codeSnippetWrapper"><pre style="border-bottom-style: none; text-align: left; padding-bottom: 0px; line-height: 12pt; border-right-style: none; background-color: #f4f4f4; margin: 0em; padding-left: 0px; width: 100%; padding-right: 0px; font-family: 'Courier New', courier, monospace; direction: ltr; border-top-style: none; color: black; font-size: 8pt; border-left-style: none; overflow: visible; padding-top: 0px" id="codeSnippet">-Xms128m<br>-Xmx128m<br>-Xmn36m<br>-XX:PermSize=80m<br>-XX:MaxPermSize=80m<br>-Xss256k<br>-XX:SurvivorRatio=1<br>-XX:MaxTenuringThreshold=20<br>-XX:+UseParNewGC<br>-XX:+UseConcMarkSweepGC<br>-XX:CMSInitiatingOccupancyFraction=73<br>-XX:+UseCMSCompactAtFullCollection<br>-XX:+CMSParallelRemarkEnabled<br>-XX:CMSFullGCsBeforeCompaction=2<br>-XX:SoftRefLRUPolicyMSPerMB=0<br>-XX:+PrintClassHistogram<br>-XX:+PrintGCDetails<br>-XX:+PrintGCTimeStamps<br>-XX:+PrintHeapAtGC<br>-Xloggc:logs/gc<span style="color: #cc6633">.log</span><br>-Dsun<span style="color: #cc6633">.rmi</span><span style="color: #cc6633">.dgc</span><span style="color: #cc6633">.server</span><span style="color: #cc6633">.gcInterval</span>=3600000<br>-Dsun<span style="color: #cc6633">.rmi</span><span style="color: #cc6633">.dgc</span><span style="color: #cc6633">.client</span><span style="color: #cc6633">.gcInterval</span>=3600000<br>-Dsun<span style="color: #cc6633">.rmi</span><span style="color: #cc6633">.server</span><span style="color: #cc6633">.exceptionTrace</span>=true</pre></div>
+                    <div>修改点：</div>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在上面的基础上调整Xmn大小到36M，设置CMSInitiatingOccupancyFraction=73。</p>
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dden区与Survivor区大小都增加到12M，通过 CMSInitiatingOccupancyFraction计算公式,计算得出value为73是，可以避免promotion faild问题，同时满足堆内存监控报警值在80%：内存大小128M*80%=102.4M 102.4M-36M=66.4M(老生代达到此值报警） 老生代达到67.15M（92M*0.73）将发生Full GC，所以在老生代大小达到66.4M时也就是WARN报警时将很有可能出现Full GC。</div>
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 增大了Eden和Survivor区的值，会减小YGC的次数，但由于空间变大理论上也会相应的增加YGC的时间，不过由于新生代本身就很小（才36M）这点儿变化可以忽略掉。实际的监控值显示YGC的时间在4-5ms之间。是可以接受范围。</div>
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SurvivorRatio 这个值还得在仔细考虑下,有待优化中</div>
+                    <div>&nbsp;</div>
+                    <div><strong>网上某个牛人的配置 :每天几百万pv一点问题都没有，网站没有停顿 </strong></div>
+                    <div id="codeSnippetWrapper"><pre style="border-bottom-style: none; text-align: left; padding-bottom: 0px; line-height: 12pt; border-right-style: none; background-color: #f4f4f4; margin: 0em; padding-left: 0px; width: 100%; padding-right: 0px; font-family: 'Courier New', courier, monospace; direction: ltr; border-top-style: none; color: black; font-size: 8pt; border-left-style: none; overflow: visible; padding-top: 0px" id="codeSnippet">$JAVA_ARGS<br>.=<br>"<br>-Dresin<span style="color: #cc6633">.home</span>=$SERVER_ROOT<br>-server<br>-Xms6000M<br>-Xmx6000M<br>-Xmn500M<br>-XX:PermSize=500M<br>-XX:MaxPermSize=500M<br>-XX:SurvivorRatio=65536<br>-XX:MaxTenuringThreshold=0<br>-Xnoclassgc<br>-XX:+DisableExplicitGC<br>-XX:+UseParNewGC<br>-XX:+UseConcMarkSweepGC<br>-XX:+UseCMSCompactAtFullCollection<br>-XX:CMSFullGCsBeforeCompaction=0<br>-XX:+CMSClassUnloadingEnabled<br>-XX:-CMSParallelRemarkEnabled<br>-XX:CMSInitiatingOccupancyFraction=90<br>-XX:SoftRefLRUPolicyMSPerMB=0<br>-XX:+PrintClassHistogram<br>-XX:+PrintGCDetails<br>-XX:+PrintGCTimeStamps<br>-XX:+PrintHeapAtGC<br>-Xloggc:log<span style="color: #006080">/gc.log<br>";</span><br></pre></div>
+                    <p>说明一下， -XX:SurvivorRatio=65536 -XX:MaxTenuringThreshold=0就是去掉了救助空间；&nbsp; </p><p>-Xnoclassgc禁用类垃圾回收，性能会高一点；&nbsp; </p><p>-XX:+DisableExplicitGC禁止System.gc()，免得程序员误调用gc方法影响性能；&nbsp; </p><p>-XX:+UseParNewGC，对年轻代采用多线程并行回收，这样收得快；&nbsp; </p><p>带CMS参数的都是和并发回收相关的，不明白的可以上网搜索；&nbsp; </p><p>CMSInitiatingOccupancyFraction，这个参数设置有很大技巧，基本上满足(Xmx-Xmn)*(100-CMSInitiatingOccupancyFraction)/100&gt;=Xmn就不会出现promotion failed。在我的应用中Xmx是6000，Xmn是500，那么Xmx-Xmn是5500兆，也就是年老代有5500兆，CMSInitiatingOccupancyFraction=90说明年老代到90%满的时候开始执行对年老代的并发垃圾回收（CMS），这时还剩10%的空间是5500*10%=550兆，所以即使Xmn（也就是年轻代共500兆）里所有对象都搬到年老代里，550兆的空间也足够了，所以只要满足上面的公式，就不会出现垃圾回收时的promotion failed；&nbsp; </p><p>SoftRefLRUPolicyMSPerMB这个参数我认为可能有点用，官方解释是softly reachable objects will remain alive for some amount of time after the last time they were referenced. The default value is one second of lifetime per free megabyte in the heap，我觉得没必要等1秒；&nbsp; </p><div id="codeSnippetWrapper"><pre style="border-bottom-style: none; text-align: left; padding-bottom: 0px; line-height: 12pt; border-right-style: none; background-color: #f4f4f4; margin: 0em; padding-left: 0px; width: 100%; padding-right: 0px; font-family: 'Courier New', courier, monospace; direction: ltr; border-top-style: none; color: black; font-size: 8pt; border-left-style: none; overflow: visible; padding-top: 0px" id="codeSnippet">-Xmx4000M<br>-Xms4000M<br>-Xmn600M<br>-XX:PermSize=500M<br>-XX:MaxPermSize=500M<br>-Xss256K<br>-XX:+DisableExplicitGC<br>-XX:SurvivorRatio=1<br>-XX:+UseConcMarkSweepGC<br>-XX:+UseParNewGC<br>-XX:+CMSParallelRemarkEnabled<br>-XX:+UseCMSCompactAtFullCollection<br>-XX:CMSFullGCsBeforeCompaction=0<br>-XX:+CMSClassUnloadingEnabled<br>-XX:LargePageSizeInBytes=128M<br>-XX:+UseFastAccessorMethods<br>-XX:+UseCMSInitiatingOccupancyOnly<br>-XX:CMSInitiatingOccupancyFraction=80<br>-XX:SoftRefLRUPolicyMSPerMB=0<br>-XX:+PrintClassHistogram<br>-XX:+PrintGCDetails<br>-XX:+PrintGCTimeStamps<br>-XX:+PrintHeapAtGC<br>-Xloggc:log/gc<span style="color: #cc6633">.log</span><br></pre></div>
+                    <p>改进方案：</p>
+                    <p>上面方法不太好，因为没有用到救助空间，所以年老代容易满，CMS执行会比较频繁。我改善了一下，还是用救助空间，但是把救助空间加大，这样也不会有promotion failed。<br>具体操作上，32位Linux和64位Linux好像不一样，64位系统似乎只要配置MaxTenuringThreshold参数，CMS还是有暂停。为了解决暂停问题和promotion failed问题，最后我设置-XX:SurvivorRatio=1 ，并把MaxTenuringThreshold去掉，这样即没有暂停又不会有promotoin failed，而且更重要的是，年老代和永久代上升非常慢（因为好多对象到不了年老代就被回收了），所以CMS执行频率非常低，好几个小时才执行一次，这样，服务器都不用重启了。 </p>
+        </div>
+    </p>
+</div>
+</body>
+</html>
